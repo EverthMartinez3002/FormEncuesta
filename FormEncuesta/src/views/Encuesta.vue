@@ -1,5 +1,8 @@
 <template>
-<FormEncuesta />
+  <div class="text-center">
+    <h1>Encuesta Circulos 2023</h1>
+    <FormEncuesta />
+  </div>
 </template>
 
 <script>
@@ -10,6 +13,14 @@ export default {
     FormEncuesta
   },
 }
-
-
 </script>
+
+<style>
+.text-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+</style>

@@ -1,7 +1,8 @@
 <template>
     <form @submit.prevent="submitForm" class="container mt-4">
         <div class="mb-3">
-            <label for="razones" class="form-label">¿Cuáles fueron las razones por las que ya no siguió asistiendo al
+            <label for="razones" class="form-label">¿Cuáles fueron las razones por las que ya no siguió
+                asistiendo al
                 círculo?</label>
             <textarea id="razones" v-model="razones" class="form-control" required></textarea>
         </div>
@@ -12,16 +13,21 @@
         </div>
 
         <div class="mb-3">
-            <label for="actividades" class="form-label">¿Algún actividad o evento que quisiera que retomáramos o algo nuevo
+            <label for="actividades" class="form-label">¿Algún actividad o evento que quisiera que retomáramos o
+                algo
+                nuevo
                 que quisiera que propusiéramos?</label>
             <textarea id="actividades" v-model="actividades" class="form-control" required></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Enviar</button>
+        <button type="submit" class="btn btn-primary">
+            <font-awesome-icon icon="paper-plane" /> Enviar  
+        </button>
     </form>
 </template>
   
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 export default {
     data() {
         return {
@@ -35,11 +41,11 @@ export default {
 
         },
     },
+    components: {
+        FontAwesomeIcon,
+    },
 };
 </script>
   
-<style scoped>
-form{
-}
-</style>
+<style scoped></style>
   
