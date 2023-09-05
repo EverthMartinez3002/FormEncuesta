@@ -8,14 +8,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: Home,
     },
     {
       path: '/encuesta',
       name: 'Encuesta',
       component: Encuesta,
     },
-  ]
-})
+  ],
+});
 
 export default router
