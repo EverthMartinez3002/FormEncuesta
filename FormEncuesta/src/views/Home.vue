@@ -19,11 +19,11 @@ export default {
     const router = useRouter();
 
     const toRegistro = () => {
-      router.push('/registro');
+      router.push('/register');
     };
 
     const toInicioSesion = () => {
-      router.push('/iniciar-sesion');
+      router.push('/login');
     };
 
     return { toRegistro, toInicioSesion };
@@ -32,5 +32,4 @@ export default {
 </script>
 
 <style scoped>
-.btn btn-dark {}
 </style>
