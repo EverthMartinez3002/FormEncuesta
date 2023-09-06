@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <h1>Encuesta Circulos 2023</h1>
+    <h1>Encuesta Materia SED </h1>
     <FormEncuesta />
   </div>
 </template>
