@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4 d-flex flex-column align-items-center">
-    <h1>Bienvenido a la Encuesta</h1>
+    <h1>Bienvenido a tu encuesta</h1>
     <p>Por favor, regístrese o inicie sesión para comenzar con la encuesta</p>
 
     <!-- Opciones de Registro e Inicio de Sesión -->
