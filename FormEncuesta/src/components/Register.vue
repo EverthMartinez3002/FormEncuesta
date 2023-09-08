@@ -28,6 +28,9 @@
                         <button type="button" @click="register" class="btn btn-dark">Registrarse</button>
                     </div>
                 </form>
+                <div v-if="showEmptyFieldsMessage" class="alert alert-danger mt-3">
+                    Por favor, complete todos los campos.
+                </div>
             </div>
         </div>
     </div>
@@ -57,18 +60,21 @@ export default {
             try {
                 this.validationErrors = {};
 
-                if (!validateUsername(this.username)) {
-                    this.validationErrors.username = 'Nombre de usuario no válido.';
+                const usernameValidation = validateUsername(this.username);
+                if (!usernameValidation.valid) {
+                    this.validationErrors.username = usernameValidation.message;
                     return;
                 }
 
-                if (!validatePassword(this.password)) {
-                    this.validationErrors.password = 'Contraseña no válida.';
+                const passwordValidation = validatePassword(this.password);
+                if (!passwordValidation.valid) {
+                    this.validationErrors.password = passwordValidation.message;
                     return;
                 }
 
-                if (!validateEmail(this.email)) {
-                    this.validationErrors.email = 'Correo electrónico no válido.';
+                const emailValidation = validateEmail(this.email);
+                if (!emailValidation.valid) {
+                    this.validationErrors.email = emailValidation.message;
                     return;
                 }
 
@@ -86,7 +92,7 @@ export default {
 
                     setTimeout(() => {
                         this.$router.push('/');
-                    }, 1500);
+                    }, 300);
                 } else {
                     console.error('Error al registrar el usuario:', response.data.message);
                 }
