@@ -91,7 +91,7 @@ export default {
                     });
 
                     setTimeout(() => {
-                        this.$router.push('/user');
+                        this.$router.push('/');
                     }, 300);
                 } else {
                     console.error('Error al registrar el usuario:', response.data.message);
