@@ -50,6 +50,11 @@ export default {
             $('#encuestaModal').modal('hide');
         },
     },
+    computed: {
+        token() {
+            return this.$store.getters.getToken;
+        },
+    },
 };
 </script>
   

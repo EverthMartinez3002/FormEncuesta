@@ -64,6 +64,8 @@ export default {
         });
 
         if (response.data.token) {
+          // Llama a la mutación para almacenar el token en Vuex directamente en el componente
+          this.$store.commit('setToken', response.data.token);
 
           Swal.fire({
             icon: 'success',
@@ -86,7 +88,7 @@ export default {
         });
       }
     },
-  },
+  }
 };
 </script>
 
@@ -96,5 +98,11 @@ export default {
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background-color: #fff;
+  padding: 1.5em 0em;
+}
+
+.card-title {
+  margin-bottom: 1em;
+
 }
 </style>

@@ -11,19 +11,22 @@
         </div>
 
         <div class="mb-3">
-            <label for="actividades" class="form-label">¿Algún actividad o dinamica que le gustaria que 
+            <label for="actividades" class="form-label">¿Algún actividad o dinamica que le gustaria que
                 implementaramos?</label>
             <textarea id="actividades" v-model="actividades" class="form-control" required></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">
-            <font-awesome-icon icon="paper-plane" /> Enviar  
+            <font-awesome-icon icon="paper-plane" /> Enviar
         </button>
     </form>
 </template>
   
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { useStore } from 'vuex';
+import axios from 'axios';
+
 export default {
     data() {
         return {
@@ -34,7 +37,23 @@ export default {
     },
     methods: {
         submitForm() {
+            const token = this.$store.getters.getToken;
 
+            console.log(token)
+
+            const tokenData = JSON.parse(atob(token.split('.')[1]));
+
+            const userId = tokenData.user.id;
+
+            axios.post('/encuesta', {
+                reseña: this.razones,
+                propuesta: this.propuestas,
+                actividad: this.actividades,
+                usuarioId: userId,
+            }).then(response => {
+            }).catch(error => {
+                console.log(error);
+            });
         },
     },
     components: {
@@ -42,6 +61,8 @@ export default {
     },
 };
 </script>
+
+
   
 <style scoped></style>
   
