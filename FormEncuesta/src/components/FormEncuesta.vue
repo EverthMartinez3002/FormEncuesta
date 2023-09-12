@@ -24,7 +24,6 @@
   
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { useStore } from 'vuex';
 import axios from 'axios';
 
 export default {
@@ -39,12 +38,11 @@ export default {
         submitForm() {
             const token = this.$store.getters.getToken;
 
-            console.log(token)
-
             const tokenData = JSON.parse(atob(token.split('.')[1]));
 
             const userId = tokenData.user.id;
 
+            console.log(userId);
             axios.post('/encuesta', {
                 reseña: this.razones,
                 propuesta: this.propuestas,
