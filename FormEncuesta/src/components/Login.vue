@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4 d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="container mt-4 d-flex justify-content-center align-items-center" style="height: 90vh;">
     <div class="card" style="width: 22rem;">
       <div class="card-body">
         <h2 class="card-title text-center">Iniciar Sesión</h2>
@@ -64,8 +64,8 @@ export default {
         });
 
         if (response.data.token) {
-          // Llama a la mutación para almacenar el token en Vuex directamente en el componente
-          this.$store.commit('setToken', response.data.token);
+        this.$store.commit('setToken', response.data.token);
+        console.log(response.data.token)
 
           Swal.fire({
             icon: 'success',
