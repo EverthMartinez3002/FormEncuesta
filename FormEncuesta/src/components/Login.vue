@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../components/utils/axios.config';
 import Swal from 'sweetalert2';
 import { validatePassword, validateEmail } from '../components/utils/validations.js';
 
@@ -58,14 +58,14 @@ export default {
           return;
         }
 
-        const response = await axios.post('/user/login', {
+        const response = await api.post('/user/login', {
           email: this.email,
           password: this.password,
         });
 
         if (response.data.token) {
-        this.$store.commit('setToken', response.data.token);
-        console.log(response.data.token)
+          this.$store.commit('setToken', response.data.token);
+          console.log(response.data.token)
 
           Swal.fire({
             icon: 'success',
@@ -73,7 +73,7 @@ export default {
           });
 
           setTimeout(() => {
-            this.$router.push('/encuesta');
+            this.$router.push('/user');
           }, 300);
         } else {
           Swal.fire({

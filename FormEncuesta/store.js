@@ -37,7 +37,10 @@ const store = createStore({
             //   commit('setToken', response.data.token);
             // });
         },
-        // Agrega más acciones según tus necesidades
+        logout({ commit }) {
+            // Llamar a esta acción cuando el usuario cierre sesión para limpiar el token
+            commit('clearToken');
+          },
     },
     getters: {
         getToken(state) {

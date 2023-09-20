@@ -43,3 +43,12 @@ export function validateEmail(email) {
 
   return { valid: true, message: '' };
 }
+
+// Valida que el campo de rol no esté vacío.
+export function validateRole(role) {
+  if (!role) {
+    return { valid: false, message: 'Por favor, selecciona un rol.' };
+  }
+
+  return { valid: true, message: '' };
+}
