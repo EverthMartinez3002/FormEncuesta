@@ -7,13 +7,11 @@
           <div class="mb-3">
             <label for="email" class="form-label">Correo Electrónico:</label>
             <input type="email" class="form-control" id="email" v-model="email" required />
-            <!-- Mostrar mensaje de error si existe -->
             <div v-if="validationErrors.email" class="text-danger">{{ validationErrors.email }}</div>
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Contraseña:</label>
             <input type="password" class="form-control" id="password" v-model="password" required />
-            <!-- Mostrar mensaje de error si existe -->
             <div v-if="validationErrors.password" class="text-danger">{{ validationErrors.password }}</div>
           </div>
           <div class="text-center">
@@ -67,13 +65,17 @@ export default {
           this.$store.commit('setToken', response.data.token);
           console.log(response.data.token)
 
+          const tokenPayload = JSON.parse(atob(response.data.token.split('.')[1]));
+
+          const userType = tokenPayload.user.Admin ? 'admin' : 'user';
+
           Swal.fire({
             icon: 'success',
             text: 'Usuario Logueado con éxito.',
           });
 
           setTimeout(() => {
-            this.$router.push('/user');
+            this.$router.push(`/${userType}`);
           }, 300);
         } else {
           Swal.fire({

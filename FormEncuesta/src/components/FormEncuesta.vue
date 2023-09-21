@@ -48,9 +48,6 @@ export default {
                     usuarioId: userId,
                 }));
 
-                console.log(userId);
-                console.log(respuestas);
-
                 const response = await api.post('/respuesta/', respuestas);
                 Swal.fire({
                     icon: 'success',

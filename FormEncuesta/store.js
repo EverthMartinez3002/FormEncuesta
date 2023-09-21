@@ -27,7 +27,9 @@ const store = createStore({
             state.token = token
             state.userId = decodeUserIdFromToken(token);
         },
-        // Agrega más mutaciones según tus necesidades
+        clearToken(state) {
+            state.token = null;
+          },
     },
     actions: {
         login({ commit }, userData) {

@@ -11,8 +11,9 @@
                         <p class="card-text">{{ formatDate(encuesta.fecha_inicio) }}</p>
                         <button v-if="encuesta.contestada" class="btn btn-primary" @click="verDetalle(encuesta)">Ver
                             Detalle</button>
-                        <router-link v-else :to="{ name: 'Encuesta', params: { idEncuesta: encuesta.id } }"
-                            class="btn btn-primary">Contestar Encuesta</router-link>
+                        <button v-else class="btn btn-primary" @click="contestarEncuesta(encuesta.id)">
+                            Contestar Encuesta
+                        </button>
                     </div>
                 </div>
             </div>
@@ -109,6 +110,9 @@ export default {
             this.$store.dispatch('logout');
             this.$router.push({ name: 'Login' });
         },
+        contestarEncuesta(encuestaId){
+            this.$router.push({ name: 'Encuesta', params: { idEncuesta: encuestaId}})
+        }
     },
     computed: {
         token() {
@@ -132,7 +136,5 @@ export default {
     background-color: #f0f8ff;
 
 }
-
-
 </style>
   
