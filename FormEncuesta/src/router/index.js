@@ -45,7 +45,7 @@ const router = createRouter({
       path: '/crear-encuesta',
       name: 'CrearEncuesta',
       component: CrearEncuesta,
-    }
+    },
   ],
 });
 
