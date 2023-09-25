@@ -7,25 +7,28 @@
                     <label for="textoPregunta">Texto de la Pregunta:</label>
                     <textarea v-model="pregunta.texto" class="form-control" :id="'textoPregunta_' + index" rows="3"
                         required></textarea>
+                    <div v-if="pregunta.errorTexto" class="text-danger">{{ pregunta.errorTexto }}</div>
                 </div>
                 <div class="form-group">
                     <label for="tipoPregunta">Tipo de Pregunta:</label>
                     <select v-model="pregunta.tipo" class="form-control" :id="'tipoPregunta_' + index" required>
-                        <option value="texto_abierto">Abierta</option>
+                        <option value="Abierta">Abierta</option>
                     </select>
+                    <div v-if="pregunta.errorTipo" class="text-danger">{{ pregunta.errorTipo }}</div>
                 </div>
             </div>
         </div>
         <div class="button-container">
             <button type="button" class="btn btn-primary mr-3" @click="agregarPregunta">Agregar Pregunta</button>
-            <button type="button" class="btn btn-success" @click="crearPreguntas">Crear Preguntas</button>
+            <button type="button" class="btn btn-success ml-3" style="margin-left: 1em;" @click="crearPreguntas">Crear Preguntas</button>
         </div>
     </div>
 </template>
-  
+
 <script>
 import api from '../components/utils/axios.config';
 import Swal from 'sweetalert2';
+import { validateTextoPregunta, validateTipo_pregunta } from '../components/utils/validations';
 
 export default {
     props: {
@@ -36,8 +39,10 @@ export default {
         return {
             preguntas: [
                 {
-                    texto: '',
-                    tipo: 'opcion_unica',
+                    texto: '¿?',
+                    tipo: '',
+                    errorTexto: '',
+                    errorTipo: '',
                 },
             ],
         };
@@ -45,35 +50,69 @@ export default {
     methods: {
         agregarPregunta() {
             this.preguntas.push({
-                texto: '',
-                tipo: 'opcion_unica',
+                texto: '¿?',
+                tipo: '',
+                errorTexto: '',
+                errorTipo: '',
             });
         },
-        crearPreguntas() {
+        async crearPreguntas() {
+            this.preguntas.forEach(pregunta => {
+                pregunta.errorTexto = '';
+                pregunta.errorTipo = '';
+            });
+
             const preguntasNoVacias = this.preguntas.filter(pregunta => pregunta.texto.trim() !== '');
 
+            for (let index = 0; index < preguntasNoVacias.length; index++) {
+                const pregunta = preguntasNoVacias[index];
+                const textoPreguntaValidation = validateTextoPregunta(pregunta.texto);
+                const tipoPreguntaValidation = validateTipo_pregunta(pregunta.tipo);
+
+                if (!textoPreguntaValidation.valid) {
+                    pregunta.errorTexto = textoPreguntaValidation.message;
+                }
+
+                if (!tipoPreguntaValidation.valid) {
+                    pregunta.errorTipo = tipoPreguntaValidation.message;
+                }
+
+                if (pregunta.errorTexto || pregunta.errorTipo) {
+                    return;
+                }
+            }
+
+            // Si llegamos aquí, todas las preguntas son válidas
             if (this.encuestaCreada && this.encuestaId !== null) {
                 const preguntasAEnviar = preguntasNoVacias.map(pregunta => {
                     return {
-                        texto: pregunta.texto,
-                        tipo: pregunta.tipo,
+                        texto_pregunta: pregunta.texto,
+                        tipo_pregunta: pregunta.tipo,
                     };
                 });
 
-                api
-                    .post('/pregunta/create', { preguntas: preguntasAEnviar, encuestaId: this.encuestaId })
-                    .then(response => {
-                        console.log('Preguntas creadas con éxito:', response.data.preguntas);
-                        this.preguntas = [
-                            {
-                                texto: '',
-                                tipo: 'opcion_unica',
-                            },
-                        ];
-                    })
-                    .catch(error => {
-                        console.error('Error al crear las preguntas:', error);
+                try {
+                    const response = await api.post('/pregunta/create', { preguntas: preguntasAEnviar, encuestaId: this.encuestaId });
+
+                    this.preguntas = [
+                        {
+                            texto: '¿?',
+                            tipo: '',
+                            errorTexto: '',
+                            errorTipo: '',
+                        },
+                    ];
+
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'Preguntas creadas exitosamente',
+                        icon: 'success',
                     });
+
+                    this.$emit('encuestaCreada');
+                } catch (error) {
+                    console.error('Error al crear las preguntas:', error);
+                }
             } else {
                 Swal.fire({
                     title: 'Error',
@@ -83,12 +122,12 @@ export default {
             }
         },
     },
-}
+};
 </script>
-  
+
 <style scoped>
 .button-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 </style>

@@ -12,19 +12,26 @@
                             <div class="form-group">
                                 <label for="titulo">Título:</label>
                                 <input v-model="titulo" type="text" class="form-control" id="titulo" required>
+                                <div v-if="validationErrors.titulo" class="text-danger">{{ validationErrors.titulo }}</div>
                             </div>
                             <div class="form-group">
                                 <label for="descripcion">Descripción:</label>
                                 <textarea v-model="descripcion" class="form-control" id="descripcion" rows="4"
                                     required></textarea>
+                                <div v-if="validationErrors.descripcion" class="text-danger">{{ validationErrors.descripcion
+                                }}</div>
                             </div>
                             <div class="form-group">
                                 <label>Lista de usuarios:</label>
                                 <select v-model="usuariosSeleccionado" class="form-control" @change="handleSelectChange">
                                     <option value="" disabled selected>Seleccionar usuario</option>
-                                    <option v-for="usuario in usuarios" :key="usuario.id" :value="String(usuario.id)">{{
-                                        usuario.username }}</option>
+                                    <option v-for="usuario in usuarios" :key="usuario.id" :value="String(usuario.id)">
+                                        {{ usuario.username }}
+                                    </option>
                                 </select>
+                                <div v-if="validationErrors.usuariosSeleccionado" class="text-danger">
+                                    {{ validationErrors.usuariosSeleccionado }}
+                                </div>
                             </div>
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-dark">Crear Encuesta</button>
@@ -37,7 +44,8 @@
                 <div class="card bg-light mb-3">
                     <div class="card-body">
                         <h2 class="card-title">Crear Preguntas</h2>
-                        <CrearPreguntas :encuestaCreada="encuestaCreada" :encuestaId="encuestaId" v-if="encuestaCreada" />
+                        <CrearPreguntas :encuestaCreada="encuestaCreada" :encuestaId="encuestaId" v-if="encuestaCreada"
+                            @preguntasCreadas="handlePreguntasCreadas" />
                         <div v-else>
                             <div class="alert alert-light mb-0" role="alert">
                                 <p class="mb-1">Primero debes crear una encuesta antes de agregar preguntas.</p>
@@ -54,6 +62,7 @@
 import api from '../components/utils/axios.config';
 import Swal from 'sweetalert2';
 import CrearPreguntas from './CrearPreguntas.vue';
+import { validateTitulo, validateDescripcion, validateRole_usuario } from '../components/utils/validations';
 
 export default {
     data() {
@@ -65,6 +74,11 @@ export default {
             usuariosSeleccionado: '',
             usuarios: [],
             encuestaId: null,
+            validationErrors: {
+                titulo: '',
+                descripcion: '',
+                usuariosSeleccionado: '',
+            },
         };
     },
     components: {
@@ -73,43 +87,74 @@ export default {
     methods: {
         mostrarFormulario() {
             this.mostrar = !this.mostrar;
-            console.log(this.encuestaId);
+        },
+        handlePreguntasCreadas() {
+            this.encuestaCreada = false;
         },
         crearEncuesta() {
+            const tituloValidation = validateTitulo(this.titulo);
+            const descripcionValidation = validateDescripcion(this.descripcion);
+            const usuariosSeleccionadoValidation = validateRole_usuario(this.usuariosSeleccionado);
+
+            if (!tituloValidation.valid) {
+                this.validationErrors.titulo = tituloValidation.message;
+            } else {
+                this.validationErrors.titulo = '';
+            }
+
+            if (!descripcionValidation.valid) {
+                this.validationErrors.descripcion = descripcionValidation.message;
+            } else {
+                this.validationErrors.descripcion = '';
+            }
+
+            if (!usuariosSeleccionadoValidation.valid) {
+                this.validationErrors.usuariosSeleccionado = usuariosSeleccionadoValidation.message;
+            } else {
+                this.validationErrors.usuariosSeleccionado = '';
+            }
+
             const nuevaEncuesta = {
                 titulo: this.titulo,
                 descripcion: this.descripcion,
                 usuarioId: this.usuariosSeleccionado,
             };
 
-            api
-                .post('/encuesta/create', nuevaEncuesta)
-                .then((response) => {
-                   const idEncuesta = response.data.encuesta;
+            if (tituloValidation.valid & descripcionValidation.valid & usuariosSeleccionadoValidation.valid) {
+                api.post('/encuesta/create', nuevaEncuesta)
+                    .then((response) => {
+                        const encuestaCreada = response.data.encuesta;
 
-                   this.encuestaId = 
+                        if (encuestaCreada) {
+                            this.encuestaId = encuestaCreada.id;
+                            this.encuestaCreada = true;
 
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: 'Encuesta creada exitosamente',
-                        icon: 'success',
+                            Swal.fire({
+                                title: 'Éxito',
+                                text: 'Encuesta creada exitosamente',
+                                icon: 'success',
+                            });
+
+                            this.titulo = '';
+                            this.descripcion = '';
+                            this.usuariosSeleccionado = '';
+                            this.mostrar = false;
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'No se pudo crear la encuesta.',
+                                icon: 'error',
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error al crear la encuesta:', error);
                     });
-
-                    this.titulo = '';
-                    this.descripcion = '';
-                    this.usuariosSeleccionado = '';
-
-                    this.mostrar = false;
-                    this.encuestaCreada = true;
-                })
-                .catch((error) => {
-                    console.error('Error al crear la encuesta:', error);
-                });
+            }
         },
     },
     created() {
-        api
-            .get('user/users')
+        api.get('user/users')
             .then((response) => {
                 this.usuarios = response.data.users;
             })
