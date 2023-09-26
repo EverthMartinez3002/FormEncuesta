@@ -125,7 +125,15 @@ export default {
           console.error('Error al registrar el usuario:', response.message);
         }
       } catch (error) {
-        console.error('Error al registrar el usuario:', error);
+        if (error.response && error.response.status === 400) {
+          if (error.response.data.message === 'El correo electrónico ya está en uso.') {
+            this.validationErrors.email = 'El correo electrónico ya está en uso.';
+          } else {
+            this.errorMessage = 'Hubo un error en el registro.';
+          }
+        } else {
+          console.error('Error al registrar el usuario:', error);
+        }
       }
     },
   },

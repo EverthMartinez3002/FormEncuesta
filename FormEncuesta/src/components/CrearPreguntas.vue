@@ -20,7 +20,8 @@
         </div>
         <div class="button-container">
             <button type="button" class="btn btn-primary mr-3" @click="agregarPregunta">Agregar Pregunta</button>
-            <button type="button" class="btn btn-success ml-3" style="margin-left: 1em;" @click="crearPreguntas">Crear Preguntas</button>
+            <button type="button" class="btn btn-success ml-3" style="margin-left: 1em;" @click="crearPreguntas">Crear
+                Preguntas</button>
         </div>
     </div>
 </template>
@@ -62,25 +63,32 @@ export default {
                 pregunta.errorTipo = '';
             });
 
-            const preguntasNoVacias = this.preguntas.filter(pregunta => pregunta.texto.trim() !== '');
+            const preguntasNoVacias = this.preguntas;
+            const errores = [];
 
             for (let index = 0; index < preguntasNoVacias.length; index++) {
                 const pregunta = preguntasNoVacias[index];
+
+
                 const textoPreguntaValidation = validateTextoPregunta(pregunta.texto);
                 const tipoPreguntaValidation = validateTipo_pregunta(pregunta.tipo);
 
                 if (!textoPreguntaValidation.valid) {
                     pregunta.errorTexto = textoPreguntaValidation.message;
+                    errores.push(textoPreguntaValidation.message);
                 }
 
                 if (!tipoPreguntaValidation.valid) {
                     pregunta.errorTipo = tipoPreguntaValidation.message;
+                    errores.push(tipoPreguntaValidation.message);
                 }
 
-                if (pregunta.errorTexto || pregunta.errorTipo) {
-                    return;
-                }
             }
+
+            if (errores.length > 0) {
+                return;
+            }
+
 
             // Si llegamos aquí, todas las preguntas son válidas
             if (this.encuestaCreada && this.encuestaId !== null) {

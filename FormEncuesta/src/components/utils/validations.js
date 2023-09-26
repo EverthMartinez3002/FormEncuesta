@@ -92,13 +92,22 @@ export function validateRole_usuario(role_usuario) {
 export function validateTextoPregunta(textoPregunta) {
   const questionMarks = (textoPregunta.match(/[¿?]/g) || []).length;
 
-  if (questionMarks !== 2 || textoPregunta.trim() === '') {
-    return { valid: false, message: 'El texto de la pregunta debe contener exactamente dos signos de interrogación y no estar vacío.' };
+  if (textoPregunta.trim() === '') {
+    return { valid: false, message: 'El texto de la pregunta no debe estar vacío.' };
+  }
+
+  if (questionMarks !== 2) {
+    return { valid: false, message: 'El texto de la pregunta debe contener exactamente dos signos de interrogación.' };
+  }
+
+  const textoEntreInterrogaciones = textoPregunta.match(/¿(.*?)\?/);
+
+  if (!textoEntreInterrogaciones || !textoEntreInterrogaciones[1].trim()) {
+    return { valid: false, message: 'El texto de la pregunta debe contener texto adicional entre los signos de interrogación.' };
   }
 
   return { valid: true, message: '' };
 }
-
 
 // Valida que el campo eligir tipo_pregunta no esta vacio
 export function validateTipo_pregunta(tipoPregunta) {

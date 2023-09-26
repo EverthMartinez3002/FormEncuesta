@@ -3,7 +3,6 @@
     <h1>Bienvenido a tu encuesta</h1>
     <p>Por favor, regístrese o inicie sesión para comenzar con la encuesta</p>
 
-    <!-- Opciones de Registro e Inicio de Sesión -->
     <div class="mt-4">
       <button class="btn btn-dark" @click="toRegistro">Registrarse</button>
       <button class="btn btn-dark" @click="toInicioSesion" style="margin-left: 10px;">Iniciar Sesión</button>
