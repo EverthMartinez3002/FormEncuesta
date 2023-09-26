@@ -26,7 +26,6 @@ export default {
     },
     async created() {
         const encuestaId = this.$route.params.idEncuesta;
-        console.log(encuestaId);
         try {
             const response = await api.get(`/pregunta/${encuestaId}`);
             this.encuesta = response.data;

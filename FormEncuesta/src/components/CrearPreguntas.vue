@@ -30,6 +30,7 @@
 import api from '../components/utils/axios.config';
 import Swal from 'sweetalert2';
 import { validateTextoPregunta, validateTipo_pregunta } from '../components/utils/validations';
+import Encuesta from '../views/Encuesta.vue';
 
 export default {
     props: {
@@ -58,6 +59,9 @@ export default {
             });
         },
         async crearPreguntas() {
+            const preguntasOriginales = [...this.preguntas];
+
+
             this.preguntas.forEach(pregunta => {
                 pregunta.errorTexto = '';
                 pregunta.errorTipo = '';
@@ -86,6 +90,7 @@ export default {
             }
 
             if (errores.length > 0) {
+                this.preguntas = preguntasOriginales;
                 return;
             }
 
@@ -110,7 +115,6 @@ export default {
                             errorTipo: '',
                         },
                     ];
-
                     Swal.fire({
                         title: 'Éxito',
                         text: 'Preguntas creadas exitosamente',
@@ -118,6 +122,8 @@ export default {
                     });
 
                     this.$emit('encuestaCreada');
+                    this.$emit('cambiarEncuestaCreada', false);
+
                 } catch (error) {
                     console.error('Error al crear las preguntas:', error);
                 }

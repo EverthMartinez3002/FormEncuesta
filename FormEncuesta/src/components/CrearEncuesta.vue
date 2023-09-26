@@ -45,7 +45,7 @@
                     <div class="card-body">
                         <h2 class="card-title">Crear Preguntas</h2>
                         <CrearPreguntas :encuestaCreada="encuestaCreada" :encuestaId="encuestaId" v-if="encuestaCreada"
-                            @preguntasCreadas="handlePreguntasCreadas" />
+                            @preguntasCreadas="handlePreguntasCreadas" @cambiarEncuestaCreada="cambiarEncuestaCreada" />
                         <div v-else>
                             <div class="alert alert-light mb-0" role="alert">
                                 <p class="mb-1">Primero debes crear una encuesta antes de agregar preguntas.</p>
@@ -90,6 +90,9 @@ export default {
         },
         handlePreguntasCreadas() {
             this.encuestaCreada = false;
+        },
+        cambiarEncuestaCreada(valor) {
+            this.encuestaCreada = valor;
         },
         crearEncuesta() {
             const tituloValidation = validateTitulo(this.titulo);
