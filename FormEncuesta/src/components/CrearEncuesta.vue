@@ -8,6 +8,9 @@
                         <button @click="mostrarFormulario" class="btn btn-dark mb-3 mt-2">
                             {{ mostrar ? 'Ocultar Formulario' : 'Mostrar Formulario' }}
                         </button>
+                        <button @click="mostrarModal" class="btn btn-primary mb-2 ms-1">
+                            Agregar Usuarios
+                        </button>
                         <form @submit.prevent="crearEncuesta" v-if="mostrar">
                             <div class="form-group">
                                 <label for="titulo">Título:</label>
@@ -52,6 +55,31 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agregarUsuariosModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Usuarios a la Encuesta</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li v-for="usuario in usuarios" :key="usuario.id">
+                            <label>
+                                <input type="checkbox" v-model="usuario.selected">
+                                {{ usuario.username }}
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" @click="agregarUsuarios">Agregar</button>
                 </div>
             </div>
         </div>
@@ -155,6 +183,21 @@ export default {
                     });
             }
         },
+        mostrarModal() {
+            const modal = document.getElementById('agregarUsuariosModal');
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('modal-open');
+            }
+        },
+        cerrarModal() {
+            const modal = document.getElementById('agregarUsuariosModal');
+            if (modal) {
+                modal.style.display = 'none'; // Oculta el modal
+            }
+        }
     },
     created() {
         api.get('user/users')
@@ -164,7 +207,7 @@ export default {
             .catch((error) => {
                 console.log('Error al obtener la lista de usuarios:', error);
             });
-    },
+    }
 };
 </script>
   
