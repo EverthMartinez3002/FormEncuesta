@@ -8,7 +8,7 @@
                         <button @click="mostrarFormulario" class="btn btn-dark mb-3 mt-2">
                             {{ mostrar ? 'Ocultar Formulario' : 'Mostrar Formulario' }}
                         </button>
-                        <button @click="mostrarModal" class="btn btn-primary mb-2 ms-1">
+                        <button @click="mostrarModal" :disabled="!encuestaCreada" class="btn btn-primary mb-2 ms-1">
                             Agregar Usuarios
                         </button>
                         <form @submit.prevent="crearEncuesta" v-if="mostrar">
@@ -69,7 +69,7 @@
                 </div>
                 <div class="modal-body">
                     <ul>
-                        <li v-for="usuario in usuarios" :key="usuario.id">
+                        <li v-for="usuario in usuariosNoAgregados" :key="usuario.id">
                             <label>
                                 <input type="checkbox" v-model="usuario.selected">
                                 {{ usuario.username }}
@@ -98,10 +98,14 @@ export default {
             mostrar: false,
             encuestaCreada: false,
             titulo: '',
+            titulo2: '',
             descripcion: '',
+            descripcion2: '',
             usuariosSeleccionado: '',
             usuarios: [],
+            usuariosS: [],
             encuestaId: null,
+            usuariosNoAgregados: '',
             validationErrors: {
                 titulo: '',
                 descripcion: '',
@@ -145,6 +149,9 @@ export default {
                 this.validationErrors.usuariosSeleccionado = '';
             }
 
+            this.titulo2 = this.titulo;
+            this.descripcion2 = this.descripcion;
+
             const nuevaEncuesta = {
                 titulo: this.titulo,
                 descripcion: this.descripcion,
@@ -159,6 +166,8 @@ export default {
                         if (encuestaCreada) {
                             this.encuestaId = encuestaCreada.id;
                             this.encuestaCreada = true;
+
+                            this.agregarUsuarioSeleccionado(this.usuariosSeleccionado);
 
                             Swal.fire({
                                 title: 'Éxito',
@@ -183,7 +192,69 @@ export default {
                     });
             }
         },
-        mostrarModal() {
+        cargarUsuariosNoAgregados() {
+            api.get(`/user/users/${this.encuestaId}`)
+                .then((response) => {
+                    this.usuariosNoAgregados = response.data.users;
+                })
+                .catch((error) => {
+                    console.error('Error al cargar la lista de usuarios no agregados:', error);
+                });
+        },
+        agregarUsuarios() {
+            const usuariosSeleccionados = this.usuariosNoAgregados.filter(usuario => usuario.selected);
+
+            if (usuariosSeleccionados.length > 0) {
+                // Obtener los IDs de los usuarios seleccionados
+                const usuariosIds = usuariosSeleccionados.map(usuario => usuario.id);
+
+                usuariosIds.forEach(async usuarioId => {
+                    const EncuestaUsuario = {
+                        titulo: this.titulo2,
+                        descripcion: this.descripcion2,
+                        usuarios: [usuarioId],
+                    };
+
+                    try {
+                        const response = await api.post('/encuesta/createUsers', EncuestaUsuario);
+                        const encuestaCreada = response.data.encuestas;
+
+                        if (encuestaCreada) {
+                            this.agregarUsuarioSeleccionado(usuarioId);
+                            Swal.fire({
+                                title: 'Éxito',
+                                text: `Usuarios Agregados exitosamente`,
+                                icon: 'success',
+                            });
+
+                            this.cerrarModal();
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: `No se pudo agregar los usuarios ${usuarioId}.`,
+                            icon: 'error',
+                        });
+                    }
+                });
+
+                this.usuariosNoAgregados.forEach(usuario => {
+                    if (usuario.selected) {
+                        usuario.selected = false;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar al menos un usuario.',
+                    icon: 'error',
+                });
+            }
+        },
+        async mostrarModal() {
+            this.cargarUsuariosNoAgregados();
+            console.log(this.usuariosS);
+
             const modal = document.getElementById('agregarUsuariosModal');
             if (modal) {
                 modal.classList.add('show');
@@ -197,6 +268,9 @@ export default {
             if (modal) {
                 modal.style.display = 'none'; // Oculta el modal
             }
+        },
+        agregarUsuarioSeleccionado(usuarioId) {
+            this.usuariosS.push(usuarioId);
         }
     },
     created() {
