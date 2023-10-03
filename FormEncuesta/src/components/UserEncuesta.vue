@@ -108,7 +108,7 @@ export default {
         },
         cerrarSesion() {
             this.$store.dispatch('logout');
-            this.$router.push({ name: 'Login' });
+            this.$router.push({ name: 'Home' });
         },
         contestarEncuesta(encuestaId){
             this.$router.push({ name: 'Encuesta', params: { idEncuesta: encuestaId}})

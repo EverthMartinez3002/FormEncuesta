@@ -193,7 +193,8 @@ export default {
             }
         },
         cargarUsuariosNoAgregados() {
-            api.get(`/user/users/${this.encuestaId}`)
+            const usuarioIds = this.usuariosS;
+            api.post(`/user/users/`, { usuarioIds })
                 .then((response) => {
                     this.usuariosNoAgregados = response.data.users;
                 })

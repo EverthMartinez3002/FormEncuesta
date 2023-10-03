@@ -1,12 +1,16 @@
 <template>
     <form @submit.prevent="submitForm" class="container mt-4">
         <h1>{{ encuesta.titulo }}</h1>
+
+        <div v-if="!encuesta.Pregunta || encuesta.Pregunta.length === 0" class="alert alert-danger" style="margin-top: 2em;">
+            <h4 class="alert-heading">No hay preguntas disponibles en esta encuesta.</h4>
+        </div>
         <div v-for="pregunta in encuesta.Pregunta" :key="pregunta.id" class="mb-3">
             <label :for="pregunta.id" class="form-label">{{ pregunta.texto_pregunta }}</label>
             <textarea :id="pregunta.id" v-model="respuestas[pregunta.id]" class="form-control" required></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">
+        <button v-if="!encuesta.Pregunta || encuesta.Pregunta.length > 0" type="submit" class="btn btn-primary">
             <font-awesome-icon icon="paper-plane" /> Enviar
         </button>
     </form>
