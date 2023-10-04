@@ -115,6 +115,9 @@ export default {
                             errorTipo: '',
                         },
                     ];
+
+                    this.$emit('preguntasCreadas'); 
+                        
                     Swal.fire({
                         title: 'Éxito',
                         text: 'Preguntas creadas exitosamente',
@@ -123,7 +126,6 @@ export default {
 
                     this.$emit('encuestaCreada');
                     this.$emit('cambiarEncuestaCreada', false);
-
                 } catch (error) {
                     console.error('Error al crear las preguntas:', error);
                 }

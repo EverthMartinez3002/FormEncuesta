@@ -29,7 +29,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <h4>Descripción:</h4>
                         <p>{{ encuestaSeleccionada ? encuestaSeleccionada.descripcion : '' }}</p>
+                        <h4>Preguntas:</h4>
                         <ul v-if="encuestaSeleccionada && encuestaSeleccionada.Pregunta">
                             <li v-for="(pregunta, index) in encuestaSeleccionada.Pregunta" :key="index">
                                 {{ pregunta.texto_pregunta }}

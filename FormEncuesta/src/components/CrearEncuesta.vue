@@ -4,13 +4,14 @@
             <div class="col-md-6">
                 <div class="card bg-light mb-3">
                     <div class="card-body">
-                        <h2 class="card-title">Crear Nueva Encuesta</h2>
-                        <button @click="mostrarFormulario" class="btn btn-dark mb-3 mt-2">
+                        <h2 class="card-title">Crear Encuesta</h2>
+                        <button @click="mostrarFormulario" class="btn btn-dark mb-3 mt-2" v-if="!mostrarAlertaPreguntas">
                             {{ mostrar ? 'Ocultar Formulario' : 'Mostrar Formulario' }}
                         </button>
-                        <button @click="mostrarModal" :disabled="!encuestaCreada" class="btn btn-primary mb-2 ms-1">
-                            Agregar Usuarios
-                        </button>
+                        <div class="alert alert-danger" v-if="mostrarAlertaPreguntas">
+                            Debes agregar preguntas a la encuesta antes de crear una nueva encuesta.
+                            <button type="button" class="close" @click="mostrarAlertaPreguntas = false">&times;</button>
+                        </div>
                         <form @submit.prevent="crearEncuesta" v-if="mostrar">
                             <div class="form-group">
                                 <label for="titulo">Título:</label>
@@ -58,6 +59,10 @@
                 </div>
             </div>
         </div>
+        <button @click="mostrarModal" :disabled="!preguntasCreadas"
+            class="btn btn-primary d-flex justify-content-center align-items-center mx-auto mb-1  custom-button">
+            Agregar Usuarios
+        </button>
     </div>
 
     <div class="modal fade" id="agregarUsuariosModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -106,6 +111,9 @@ export default {
             usuariosS: [],
             encuestaId: null,
             usuariosNoAgregados: '',
+            encuestasIds: [],
+            preguntasCreadas: false,
+            mostrarAlertaPreguntas: false,
             validationErrors: {
                 titulo: '',
                 descripcion: '',
@@ -118,7 +126,12 @@ export default {
     },
     methods: {
         mostrarFormulario() {
-            this.mostrar = !this.mostrar;
+            if (this.encuestaCreada && !this.preguntasCreadas) {
+                this.mostrarAlertaPreguntas = true
+            }
+            else {
+                this.mostrar = !this.mostrar;
+            }
         },
         handlePreguntasCreadas() {
             this.encuestaCreada = false;
@@ -166,6 +179,9 @@ export default {
                         if (encuestaCreada) {
                             this.encuestaId = encuestaCreada.id;
                             this.encuestaCreada = true;
+                            this.preguntasCreadas = false;
+
+                            this.encuestasIds.push(encuestaCreada.id);
 
                             this.agregarUsuarioSeleccionado(this.usuariosSeleccionado);
 
@@ -221,6 +237,7 @@ export default {
                         const encuestaCreada = response.data.encuestas;
 
                         if (encuestaCreada) {
+                            this.encuestasIds.push(encuestaCreada[0].id);
                             this.agregarUsuarioSeleccionado(usuarioId);
                             Swal.fire({
                                 title: 'Éxito',
@@ -229,6 +246,7 @@ export default {
                             });
 
                             this.cerrarModal();
+                            this.preguntasCreadas = false;
                         }
                     } catch (error) {
                         Swal.fire({
@@ -254,7 +272,6 @@ export default {
         },
         async mostrarModal() {
             this.cargarUsuariosNoAgregados();
-            console.log(this.usuariosS);
 
             const modal = document.getElementById('agregarUsuariosModal');
             if (modal) {
@@ -272,6 +289,9 @@ export default {
         },
         agregarUsuarioSeleccionado(usuarioId) {
             this.usuariosS.push(usuarioId);
+        },
+        handlePreguntasCreadas() {
+            this.preguntasCreadas = true;
         }
     },
     created() {
@@ -307,6 +327,29 @@ select {
 
 .card {
     margin-top: 20px;
+}
+
+.custom-button {
+    width: 200px;
+    /* Ancho deseado */
+    height: 50px;
+    /* Alto deseado */
+    font-size: 16px;
+    /* Tamaño de fuente deseado */
+    background-color: #000000;
+    /* Color de fondo deseado */
+    color: white;
+    /* Color de texto deseado */
+    border: none;
+    /* Sin borde */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Efecto de transición para el color de fondo */
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+    /* Cambia el color de fondo al pasar el mouse sobre el botón */
 }
 </style>
   
