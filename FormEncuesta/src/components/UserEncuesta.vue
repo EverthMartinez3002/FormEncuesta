@@ -41,6 +41,17 @@
                 </div>
             </div>
         </div>
+        <div class="text-center mt-1">
+            <div class="btn-group" role="group">
+                <button @click="cambiarPagina(currentPage - 1)" :disabled="currentPage === 1" class="btn btn-dark"
+                    style="margin-bottom: 1em;">Anterior</button>
+                <button @click="cambiarPagina(currentPage + 1)" :disabled="currentPage === Math.ceil(totalItems / pageSize)"
+                    class="btn btn-danger" style="margin-left: 1em; margin-bottom: 1em;">
+                    Siguiente
+                </button>
+
+            </div>
+        </div>
     </div>
 </template>
   
@@ -52,6 +63,9 @@ export default {
         return {
             encuestas: [],
             encuestaSeleccionada: null,
+            currentPage: 1,
+            pageSize: 9,
+            totalItems: 0,
         };
     },
     methods: {
@@ -63,10 +77,16 @@ export default {
                 const userId = tokenData.user.id;
 
                 // Realizar una solicitud para obtener las encuestas del usuario
-                const response = await api.get(`/encuesta/${userId}`);
+                const response = await api.get(`/encuesta/${userId}`, {
+                    params: {
+                        page: this.currentPage,
+                        pageSize: this.pageSize,
+                    },
+                });
 
                 if (response.data && response.data.encuestas) {
                     this.encuestas = response.data.encuestas;
+                    this.totalItems = response.data.count;
 
                     // Verificar si cada encuesta está contestada
                     for (const encuesta of this.encuestas) {
@@ -112,8 +132,12 @@ export default {
             this.$store.dispatch('logout');
             this.$router.push({ name: 'Home' });
         },
-        contestarEncuesta(encuestaId){
-            this.$router.push({ name: 'Encuesta', params: { idEncuesta: encuestaId}})
+        contestarEncuesta(encuestaId) {
+            this.$router.push({ name: 'Encuesta', params: { idEncuesta: encuestaId } })
+        },
+        cambiarPagina(page) {
+            this.currentPage = page;
+            this.cargarEncuestas();
         }
     },
     computed: {
