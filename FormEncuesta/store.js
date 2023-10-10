@@ -29,20 +29,15 @@ const store = createStore({
         },
         clearToken(state) {
             state.token = null;
-          },
+        },
     },
     actions: {
-        login({ commit }, userData) {
-            // Aquí puedes realizar la llamada de inicio de sesión y, cuando tengas el token, llamar a la mutación para almacenar el token en el estado
-            // Ejemplo:
-            // AuthService.login(userData).then(response => {
-            //   commit('setToken', response.data.token);
-            // });
+        login({ commit }, token) {
+            commit('SetToken', token);
         },
         logout({ commit }) {
-            // Llamar a esta acción cuando el usuario cierre sesión para limpiar el token
             commit('clearToken');
-          },
+        },
     },
     getters: {
         getToken(state) {

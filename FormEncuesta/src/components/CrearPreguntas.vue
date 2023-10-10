@@ -20,8 +20,11 @@
         </div>
         <div class="button-container">
             <button type="button" class="btn btn-primary mr-3" @click="agregarPregunta">Agregar Pregunta</button>
-            <button type="button" class="btn btn-success ml-3" style="margin-left: 1em;" @click="crearPreguntas">Crear
+            <button type="button" class="btn btn-success ml-3" style="margin-left: 1em;" @click="crearPreguntas"
+                :disabled="preguntas.length === 0">Crear
                 Preguntas</button>
+            <button type="button" class="btn btn-danger" style="margin-left: 1em;" @click="eliminarPregunta(index)">Eliminar
+                Pregunta</button>
         </div>
     </div>
 </template>
@@ -116,8 +119,8 @@ export default {
                         },
                     ];
 
-                    this.$emit('preguntasCreadas'); 
-                        
+                    this.$emit('preguntasCreadas');
+
                     Swal.fire({
                         title: 'Éxito',
                         text: 'Preguntas creadas exitosamente',
@@ -137,6 +140,9 @@ export default {
                 });
             }
         },
+        eliminarPregunta(index) {
+            this.preguntas.splice(index, 1);
+        }
     },
 };
 </script>
